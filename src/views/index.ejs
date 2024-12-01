@@ -1,0 +1,20 @@
+<% let name = "toto"%>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title><%= title %></title>
+</head>
+<header>
+    <%- include('app/header') %>
+</header>
+<body>
+    <h2><%=name%></h2>
+    <%for(let i = 0; i < 10; i++){%>
+    <p>test <%= auCarre(i) %></p>
+    <p>test <%= auCube(i) %></p>
+    <%}%>
+    <p><%= test %></p>
+    <img src="benzema-ballondor-1.jpg" alt="Une photo de benzema avec le ballon d'or">
+</body>
+</html>
