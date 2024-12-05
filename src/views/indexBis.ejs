@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>File Upload and Stream</title>
+</head>
+<body>
+<h1>Upload a File</h1>
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" id="fileInput">
+    <button type="submit">Upload</button>
+</form>
+
+<h1>Stream a Video</h1>
+<button id="streamButton">Stream Video</button>
+<video id="videoPlayer" controls style="display: none;">
+    <source id="videoSource" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+
+        const response = await fetch('/upload', {
+            method: 'POST',
+            body: file,
+            headers: {
+                'x-file-name': file.name
+            }
+        });
+
+        if (response.ok) {
+            alert('File uploaded successfully');
+        } else {
+            console.error('Error uploading file:', response.statusText);
+        }
+    });
+
+    document.getElementById('streamButton').addEventListener('click', async () => {
+        const fileName = 'S1A1-Babolat-Gonzales-Charpentier-Crepy-Argentique.mp4'; // Remplacez par le nom du fichier que vous souhaitez streamer
+        const response = await fetch(`/stream?file=${fileName}`);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        document.getElementById('videoSource').src = url;
+        document.getElementById('videoPlayer').style.display = 'block';
+        document.getElementById('videoPlayer').load();
+    });
+</script>
+</body>
+</html>

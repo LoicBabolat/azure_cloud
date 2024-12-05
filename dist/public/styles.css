@@ -1,0 +1,168 @@
+video {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    display: block;
+    background-color: black;
+}
+
+/* Styles communs */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 10px;
+}
+
+input, textarea {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 10px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Styles spécifiques pour la page d'accueil */
+.home {
+    text-align: center;
+}
+
+.home nav {
+    margin-top: 20px;
+}
+
+/* Styles spécifiques pour la page de connexion */
+.login {
+    text-align: center;
+}
+
+.login form {
+    margin-top: 20px;
+}
+
+/* Styles spécifiques pour la page d'inscription */
+.register {
+    text-align: center;
+}
+
+.register form {
+    margin-top: 20px;
+}
+
+/* Styles spécifiques pour la page d'ajout de vidéo */
+.add-video {
+    text-align: center;
+}
+
+.add-video form {
+    margin-top: 20px;
+}
+
+/* Styles spécifiques pour la page de liste des vidéos */
+.video-list {
+    text-align: center;
+}
+
+.video-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.video-list li {
+    margin-bottom: 20px;
+}
+
+.video-list img {
+    max-width: 100%;
+    height: auto;
+}
+/* Styles spécifiques pour la page de chargement */
+.loading {
+    text-align: center;
+}
+
+.loading h1 {
+    margin-bottom: 20px;
+}
+
+.loading p {
+    font-size: 1.2em;
+}
+/* Styles spécifiques pour la page de liste des vidéos */
+.video-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.video-list li {
+    margin-bottom: 20px;
+}
+
+.video-list img {
+    max-width: 100%;
+    height: auto;
+}
+
+.video-list video {
+    width: 100%;
+    height: auto;
+}

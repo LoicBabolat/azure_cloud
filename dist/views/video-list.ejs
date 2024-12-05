@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video List</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="video-list">
+<div class="container">
+    <h1>Video List</h1>
+    <ul>
+        <% videos.forEach(video => { %>
+            <li>
+                <h2><a href="/video/<%= video.id %>"><%= video.fileName %></a></h2>
+                <p><%= video.description %></p>
+            </li>
+        <% }) %>
+    </ul>
+</div>
+</body>
+</html>

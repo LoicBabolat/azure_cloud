@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= video.fileName %></title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="video-detail">
+<div class="container">
+    <h1><%= video.fileName %></h1>
+    <p><%= video.description %></p>
+    <img id="thumbnail" src="" alt="Thumbnail">
+    <video id="videoPlayer" controls style="display: none;">
+        <source id="videoSource" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const videoId = <%= video.id %>;
+
+        // Stream the thumbnail
+        const thumbnailResponse = await fetch(`/video/${videoId}/stream?file=<%= video.thumbnail %>`);
+        const thumbnailBlob = await thumbnailResponse.blob();
+        const thumbnailUrl = URL.createObjectURL(thumbnailBlob);
+        document.getElementById('thumbnail').src = thumbnailUrl;
+
+        // Stream the video
+        const videoResponse = await fetch(`/video/${videoId}/stream?file=<%= video.fileName %>`);
+        const videoBlob = await videoResponse.blob();
+        const videoUrl = URL.createObjectURL(videoBlob);
+        document.getElementById('videoSource').src = videoUrl;
+        document.getElementById('videoPlayer').style.display = 'block';
+        document.getElementById('videoPlayer').load();
+    });
+</script>
+</body>
+</html>
