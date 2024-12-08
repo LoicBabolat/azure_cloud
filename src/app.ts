@@ -10,7 +10,7 @@ const accountName = "welearnblob";
 const accountURL = `https://${accountName}.blob.core.windows.net`;
 const blobServiceClient = new BlobServiceClient(
     accountURL,
-    new StorageSharedKeyCredential("welearnblob", "76lKkWPULgyr2o6gVlrN4vVnihn90y41RTHlNQLJ5yEyni3NmxSia+iWtV8E4Zfkw6pdMjvdhCvd+ASt9j/pBg==")
+    new StorageSharedKeyCredential("welearnblob", process.env.AZURE_STORAGE_ACCOUNT_ACCESS_KEY as string)
 );
 
 const containerName = "video";

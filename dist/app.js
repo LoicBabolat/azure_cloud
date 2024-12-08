@@ -53,7 +53,7 @@ const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const accountName = "welearnblob";
 const accountURL = `https://${accountName}.blob.core.windows.net`;
-const blobServiceClient = new storage_blob_1.BlobServiceClient(accountURL, new storage_blob_1.StorageSharedKeyCredential("welearnblob", "76lKkWPULgyr2o6gVlrN4vVnihn90y41RTHlNQLJ5yEyni3NmxSia+iWtV8E4Zfkw6pdMjvdhCvd+ASt9j/pBg=="));
+const blobServiceClient = new storage_blob_1.BlobServiceClient(accountURL, new storage_blob_1.StorageSharedKeyCredential("welearnblob", process.env.AZURE_STORAGE_ACCOUNT_ACCESS_KEY));
 const containerName = "video";
 const containerClient = blobServiceClient.getContainerClient(containerName);
 const app = (0, express_1.default)();
