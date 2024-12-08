@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>Add Video</title>
-    <link rel="stylesheet" href="/styles.css">
 </head>
 <body class="add-video">
 <div class="container">
     <h1>Add Video</h1>
     <form id="uploadForm" enctype="multipart/form-data">
-        <label for="fileName">File Name:</label>
-        <input type="text" id="fileName" name="fileName" required><br><br>
-        <label for="description">Description:</label>
+        <label for="description">Titre:</label>
         <textarea id="description" name="description" required></textarea><br><br>
         <label for="thumbnail">Thumbnail File:</label>
         <input type="file" id="thumbnail" name="thumbnail" required><br><br>
@@ -26,29 +24,74 @@
     document.getElementById('uploadForm').addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const fileName = document.getElementById('fileName').value;
         const description = document.getElementById('description').value;
         const thumbnailFile = document.getElementById('thumbnail').files[0];
         const videoFile = document.getElementById('file').files[0];
 
-        const formData = new FormData();
-        formData.append('file', videoFile);
-        formData.append('thumbnail', thumbnailFile);
+        if (!description || !thumbnailFile || !videoFile) {
+            alert('All fields are required');
+            return;
+        }
 
-        const response = await fetch('/add-video', {
-            method: 'POST',
-            headers: {
-                'x-file-name': fileName,
-                'x-file-description': description,
-                'x-file-thumbnail-name': thumbnailFile.name,
-            },
-            body: formData,
-        });
+        try {
+            // Upload video file
+            const videoResponse = await fetch('/upload', {
+                method: 'POST',
+                body: videoFile,
+                headers: {
+                    'x-file-name': videoFile.name,
+                    'x-file-description': description,
+                },
+            });
 
-        if (response.ok) {
-            window.location.href = '/';
-        } else {
-            alert('Error uploading video');
+            if (!videoResponse.ok) {
+                throw new Error('Error uploading video file');
+            }
+
+            const videoData = await videoResponse.json();
+            const videoFileName = videoData.fileName;
+
+            // Upload thumbnail file
+            const thumbnailResponse = await fetch('/upload', {
+                method: 'POST',
+                body: thumbnailFile,
+                headers: {
+                    'x-file-name': thumbnailFile.name,
+                    'x-file-description': description,
+                },
+            });
+
+            if (!thumbnailResponse.ok) {
+                throw new Error('Error uploading thumbnail file');
+            }
+
+            const thumbnailData = await thumbnailResponse.json();
+            const thumbnailFileName = thumbnailData.fileName;
+
+            // Add video data to the database
+            if(videoResponse.ok && thumbnailResponse.ok) {
+                const addVideoDataResponse = await fetch('/add-video-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        fileName: videoFileName,
+                        thumbnailFileName: thumbnailFileName,
+                        description: description
+                    }),
+                });
+
+
+                if (!addVideoDataResponse.ok) {
+                    throw new Error('Error adding video data to the database');
+                }
+            }
+
+            alert('Files uploaded successfully and data added to the database');
+        } catch (error) {
+            console.error('Error uploading files:', error);
+            alert('Error uploading files');
         }
     });
 </script>

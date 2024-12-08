@@ -8,9 +8,7 @@
 </head>
 <body class="video-detail">
 <div class="container">
-    <h1><%= video.fileName %></h1>
-    <p><%= video.description %></p>
-    <img id="thumbnail" src="" alt="Thumbnail">
+    <h1><%= video.description %></h1>
     <video id="videoPlayer" controls style="display: none;">
         <source id="videoSource" type="video/mp4">
         Your browser does not support the video tag.
@@ -19,16 +17,10 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
-        const videoId = <%= video.id %>;
-
-        // Stream the thumbnail
-        const thumbnailResponse = await fetch(`/video/${videoId}/stream?file=<%= video.thumbnail %>`);
-        const thumbnailBlob = await thumbnailResponse.blob();
-        const thumbnailUrl = URL.createObjectURL(thumbnailBlob);
-        document.getElementById('thumbnail').src = thumbnailUrl;
+        const videoId = '<%= video.id %>';
 
         // Stream the video
-        const videoResponse = await fetch(`/video/${videoId}/stream?file=<%= video.fileName %>`);
+        const videoResponse = await fetch(`/video/${videoId}/stream`);
         const videoBlob = await videoResponse.blob();
         const videoUrl = URL.createObjectURL(videoBlob);
         document.getElementById('videoSource').src = videoUrl;

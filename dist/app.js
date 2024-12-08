@@ -59,6 +59,8 @@ const containerClient = blobServiceClient.getContainerClient(containerName);
 const app = (0, express_1.default)();
 let currentUser = null;
 app.use(express_1.default.urlencoded({ extended: true }));
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(node_path_1.default.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', node_path_1.default.join(__dirname, 'views'));
@@ -97,6 +99,12 @@ app.get('/logout', (req, res) => {
     currentUser = null;
     res.redirect('/login');
 });
+app.get('/add-video', (req, res) => {
+    if (!currentUser) {
+        return res.redirect('/login');
+    }
+    res.render('add-video');
+});
 app.post('/add-video', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!currentUser) {
         return res.redirect('/login');
@@ -112,12 +120,10 @@ app.post('/add-video', (req, res) => __awaiter(void 0, void 0, void 0, function*
     if (!fileName || !description || !thumbnailFileName || !userId) {
         return res.status(400).send('All fields are required');
     }
+    console.log(fileName, description, thumbnailFileName, userId);
     const filePath = node_path_1.default.join(uploadDir, fileName);
     const fileStream = fs.createWriteStream(filePath);
     req.pipe(fileStream);
-    const thumbnailPath = node_path_1.default.join(uploadDir, thumbnailFileName);
-    const thumbnailStream = fs.createWriteStream(thumbnailPath);
-    req.pipe(thumbnailStream);
     req.on('end', () => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const blobClient = containerClient.getBlockBlobClient(fileName);
@@ -125,7 +131,7 @@ app.post('/add-video', (req, res) => __awaiter(void 0, void 0, void 0, function*
             yield blobClient.uploadStream(readStream);
             console.log('Video uploaded to Azure Blob Storage');
             const thumbnailBlobClient = containerClient.getBlockBlobClient(thumbnailFileName);
-            const thumbnailReadStream = fs.createReadStream(thumbnailPath);
+            const thumbnailReadStream = fs.createReadStream(node_path_1.default.join(uploadDir, thumbnailFileName));
             yield thumbnailBlobClient.uploadStream(thumbnailReadStream);
             console.log('Thumbnail uploaded to Azure Blob Storage');
             yield prisma.video.create({
@@ -148,12 +154,6 @@ app.post('/add-video', (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(500).send('Error uploading file');
     });
 }));
-app.get('/add-video', (req, res) => {
-    if (!currentUser) {
-        return res.redirect('/login');
-    }
-    res.render('add-video');
-});
 app.get('/video-list', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!currentUser) {
         return res.redirect('/login');
@@ -161,22 +161,10 @@ app.get('/video-list', (req, res) => __awaiter(void 0, void 0, void 0, function*
     const videos = yield prisma.video.findMany();
     res.render('video-list', { videos });
 }));
-app.post('/add-video', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get('/video/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!currentUser) {
         return res.redirect('/login');
     }
-    const { fileName, description, thumbnail } = req.body;
-    yield prisma.video.create({
-        data: {
-            fileName,
-            description,
-            thumbnail,
-            userId: currentUser.id,
-        },
-    });
-    res.redirect('/video-list');
-}));
-app.get('/video/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const videoId = parseInt(req.params.id);
     const video = yield prisma.video.findUnique({ where: { id: videoId } });
     if (!video) {
@@ -205,6 +193,108 @@ app.get('/video/:id/stream', (req, res) => __awaiter(void 0, void 0, void 0, fun
     catch (e) {
         console.error(e);
         res.status(500).send('Error streaming file');
+    }
+}));
+app.get('/video/:id/img', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const videoId = parseInt(req.params.id);
+    const video = yield prisma.video.findUnique({ where: { id: videoId } });
+    if (!video) {
+        return res.status(404).send('Image not found');
+    }
+    try {
+        const blobClient = containerClient.getBlockBlobClient(video.thumbnail);
+        const downloadBlobBlockResponse = yield blobClient.download(0);
+        const blobStream = downloadBlobBlockResponse.readableStreamBody;
+        res.setHeader('Content-Type', downloadBlobBlockResponse.contentType);
+        res.setHeader('Content-Length', downloadBlobBlockResponse.contentLength);
+        blobStream === null || blobStream === void 0 ? void 0 : blobStream.pipe(res);
+        blobStream === null || blobStream === void 0 ? void 0 : blobStream.on('error', (err) => {
+            console.error('Error streaming blob:', err);
+            res.status(500).send('Error streaming blob');
+        });
+    }
+    catch (e) {
+        console.error(e);
+        res.status(500).send('Error streaming file');
+    }
+}));
+app.get("/indexBis", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.render('indexBis');
+}));
+app.post('/upload', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const uploadDir = node_path_1.default.join(__dirname, 'public', 'video');
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir);
+    }
+    const fileName = req.headers['x-file-name'];
+    const filePath = node_path_1.default.join(uploadDir, fileName);
+    const fileStream = fs.createWriteStream(filePath);
+    if (!fileName) {
+        return res.status(400).send('All fields are required');
+    }
+    req.pipe(fileStream);
+    req.on('end', () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const blobClient = containerClient.getBlockBlobClient(fileName);
+            const readStream = fs.createReadStream(filePath);
+            yield blobClient.uploadStream(readStream);
+            console.log('File uploaded to Azure Blob Storage');
+            res.status(200).json({ fileName });
+        }
+        catch (error) {
+            console.error('Error2 uploading file:', error);
+            res.status(500).send('Error2 uploading file');
+        }
+    }));
+    req.on('error', (err) => {
+        console.error('Error1 uploading file:', err);
+        res.status(500).send('Error1 uploading file');
+    });
+}));
+app.post('/add-video-data', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!currentUser) {
+        return res.redirect('/login');
+    }
+    const { fileName, thumbnailFileName, description } = req.body;
+    if (!fileName || !thumbnailFileName || !description) {
+        return res.status(400).send('All fields are required');
+    }
+    try {
+        yield prisma.video.create({
+            data: {
+                fileName,
+                description,
+                thumbnail: thumbnailFileName,
+                userId: currentUser.id,
+            },
+        });
+        res.status(200).redirect('/');
+    }
+    catch (error) {
+        console.error('Error adding video data to the database:', error);
+        res.status(500).send('Error adding video data to the database');
+    }
+}));
+app.get('/stream-old', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const fileName = req.query.file;
+        if (!fileName) {
+            return res.status(400).send('File name is required');
+        }
+        const blobClient = containerClient.getBlockBlobClient(fileName);
+        const downloadBlobBlockResponse = yield blobClient.download(0);
+        const blobStream = downloadBlobBlockResponse.readableStreamBody;
+        res.setHeader('Content-Type', downloadBlobBlockResponse.contentType);
+        res.setHeader('Content-Length', downloadBlobBlockResponse.contentLength);
+        blobStream === null || blobStream === void 0 ? void 0 : blobStream.pipe(res);
+        blobStream === null || blobStream === void 0 ? void 0 : blobStream.on('error', (err) => {
+            console.error('Error downloading blob:', err);
+            res.status(500).send('Error downloading blob');
+        });
+    }
+    catch (e) {
+        console.error(e);
+        res.status(500).send('Error downloading file');
     }
 }));
 app.listen(process.env.PORT || 3007, () => {

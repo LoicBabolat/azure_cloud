@@ -12,11 +12,25 @@
     <ul>
         <% videos.forEach(video => { %>
             <li>
-                <h2><a href="/video/<%= video.id %>"><%= video.fileName %></a></h2>
-                <p><%= video.description %></p>
+                <h2 class="videos"  data-id="<%= video.id %>"><a href="/video/<%= video.id %>"><%= video.description %></a></h2>
+                <img id="<%= video.id%>-img" src="" alt="Thumbnail">
             </li>
         <% }) %>
     </ul>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+
+        const videosElement = document.querySelectorAll('.videos');
+        for(video of videosElement){
+            const videoId = video.dataset.id;
+            // Stream the thumbnail
+            const thumbnailResponse = await fetch(`/video/${videoId}/img`);
+            const thumbnailBlob = await thumbnailResponse.blob();
+            const thumbnailUrl = URL.createObjectURL(thumbnailBlob);
+            document.getElementById(`${videoId}-img`).src = thumbnailUrl;
+        }
+    })
+</script>
 </body>
 </html>

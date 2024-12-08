@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
     <title>File Upload and Stream</title>
 </head>
 <body>
@@ -27,24 +27,23 @@
         const fileInput = document.getElementById('fileInput');
         const file = fileInput.files[0];
 
-        const response = await fetch('/upload', {
-            method: 'POST',
-            body: file,
-            headers: {
-                'x-file-name': file.name
-            }
-        });
-
-        if (response.ok) {
-            alert('File uploaded successfully');
-        } else {
-            console.error('Error uploading file:', response.statusText);
+        try{
+            await fetch('/upload', {
+                method: 'POST',
+                body: file,
+                headers: {
+                    'x-file-name': file.name
+                }
+            });
+        }
+        catch (error){
+            console.error('Error uploading file:', error);
         }
     });
 
     document.getElementById('streamButton').addEventListener('click', async () => {
-        const fileName = 'S1A1-Babolat-Gonzales-Charpentier-Crepy-Argentique.mp4'; // Remplacez par le nom du fichier que vous souhaitez streamer
-        const response = await fetch(`/stream?file=${fileName}`);
+        const fileName = '175815-854238855_tiny.mp4'; // Remplacez par le nom du fichier que vous souhaitez streamer
+        const response = await fetch(`/stream-old?file=${fileName}`);
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         document.getElementById('videoSource').src = url;

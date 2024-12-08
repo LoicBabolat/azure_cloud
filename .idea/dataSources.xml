@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="welearn_db@localhost" uuid="d35128af-6dec-4d49-9ecf-eb83332d5414">
+    <data-source source="LOCAL" name="welearnwebapp@localhost" uuid="46a521a1-9f48-4f90-9126-7c37741fb5f0">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/welearn_db</jdbc-url>
+      <jdbc-url>jdbc:mysql://welearnwebapp-server.mysql.database.azure.com:3306/welearnwebapp-database</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
