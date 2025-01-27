@@ -40,8 +40,5 @@ L'architecture de mon projet se compose des éléments suivants :
 
 - **Express.js** : Utilisé pour créer l'application web et gérer les routes.
 - **Prisma** : ORM utilisé pour interagir avec la base de données MySQL.
-- **Azure SDK for JavaScript** : Utilisé pour interagir avec Azure Blob Storage.
-
-#### Front-end
-
-Pour le front-end, j'ai utilisé des fichiers ejs utiliser les variables js en html, mais l'organisation du javascript est dans des fichiers typescript à part.
+- **Azure SDK for JavaScript** : Utilisé pour interagir avec les différents services Azure.
+- **EJS** : Utilisé avec NodeJS pour intégrer du code Javascript dans la partie HTML.
